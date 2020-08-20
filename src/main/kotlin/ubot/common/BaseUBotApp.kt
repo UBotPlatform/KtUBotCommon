@@ -12,4 +12,16 @@ open class BaseUBotApp : UBotApp {
     override suspend fun onMemberLeft(bot: String, source: String, sender: String): UBotEventResult {
         return UBotEventResult.Ignore
     }
+
+    override suspend fun processGroupInvitation(bot: String, sender: String, target: String, reason: String): UBotEventResult {
+        return UBotEventResult.Ignore
+    }
+
+    override suspend fun processFriendRequest(bot: String, sender: String, reason: String): UBotEventResult {
+        return UBotEventResult.Ignore
+    }
+
+    override suspend fun processMembershipRequest(bot: String, source: String, sender: String, inviter: String, reason: String): UBotEventResult {
+        return UBotEventResult.Ignore
+    }
 }

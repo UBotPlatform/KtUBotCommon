@@ -1,6 +1,6 @@
 package ubot.common
 
-data class UBotEventResult(val type: Int) {
+open class UBotEventResult(val type: Int) {
     companion object {
         val Ignore = UBotEventResult(0)
         val Continue = UBotEventResult(1)

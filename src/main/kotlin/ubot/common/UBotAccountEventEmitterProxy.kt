@@ -15,4 +15,16 @@ internal class UBotAccountEventEmitterProxy constructor(private val rpc: RpcChan
     override suspend fun onMemberLeft(source: String, sender: String) {
         return rpc.call("on_member_left", arrayOf(source, sender))
     }
+
+    override suspend fun processGroupInvitation(sender: String, target: String, reason: String): UBotEventResultWithReason {
+        return rpc.call("process_group_invitation", arrayOf(sender, target, reason))
+    }
+
+    override suspend fun processFriendRequest(sender: String, reason: String): UBotEventResultWithReason {
+        return rpc.call("process_friend_request", arrayOf(sender, reason))
+    }
+
+    override suspend fun processMembershipRequest(source: String, sender: String, inviter: String, reason: String): UBotEventResultWithReason {
+        return rpc.call("process_membership_request", arrayOf(source, sender, inviter, reason))
+    }
 }
