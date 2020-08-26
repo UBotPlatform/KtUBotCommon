@@ -14,6 +14,9 @@ interface UBotAccount {
     suspend fun getMemberName(source: String, target: String): String
     suspend fun getUserAvatar(id: String): String
     suspend fun getSelfID(): String
+    suspend fun getPlatformID(): String
+    suspend fun getGroupList(): Array<String>
+    suspend fun getMemberList(id: String): Array<String>
 
     companion object {
         fun UBotAccount.applyTo(rpc: RpcChannel) {
@@ -65,6 +68,16 @@ interface UBotAccount {
             }
             rpc.register("get_self_id") { _ ->
                 this.getSelfID()
+            }
+            rpc.register("get_platform_id") { _ ->
+                this.getPlatformID()
+            }
+            rpc.register("get_group_list") { _ ->
+                this.getGroupList()
+            }
+            rpc.register("get_member_list") { params ->
+                this.getMemberList(
+                        RpcChannel.readParam(params, 0, "id") ?: "")
             }
         }
     }

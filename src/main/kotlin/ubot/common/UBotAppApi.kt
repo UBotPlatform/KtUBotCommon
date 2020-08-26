@@ -12,6 +12,9 @@ interface UBotAppApi {
     suspend fun getMemberName(bot: String, source: String, target: String): String
     suspend fun getUserAvatar(bot: String, id: String): String
     suspend fun getSelfID(bot: String): String
+    suspend fun getPlatformID(bot: String): String
+    suspend fun getGroupList(bot: String): Array<String>
+    suspend fun getMemberList(bot: String, id: String): Array<String>
 
     companion object {
         fun of(rpc: RpcChannel): UBotAppApi {

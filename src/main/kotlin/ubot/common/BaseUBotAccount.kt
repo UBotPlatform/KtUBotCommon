@@ -44,4 +44,16 @@ open class BaseUBotAccount : UBotAccount {
     override suspend fun getSelfID(): String {
         TODO("Not yet implemented")
     }
+
+    override suspend fun getPlatformID(): String {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getGroupList(): Array<String> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getMemberList(id: String): Array<String> {
+        TODO("Not yet implemented")
+    }
 }

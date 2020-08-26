@@ -39,4 +39,16 @@ internal class UBotAppApiProxy constructor(private val rpc: RpcChannel)
     override suspend fun getSelfID(bot: String): String {
         return rpc.call("get_self_id", arrayOf(bot))
     }
+
+    override suspend fun getPlatformID(bot: String): String {
+        return rpc.call("get_platform_id", arrayOf(bot))
+    }
+
+    override suspend fun getGroupList(bot: String): Array<String> {
+        return rpc.call("get_group_list", arrayOf(bot))
+    }
+
+    override suspend fun getMemberList(bot: String, id: String): Array<String> {
+        return rpc.call("get_member_list", arrayOf(bot, id))
+    }
 }
