@@ -9,14 +9,6 @@ open class BaseUBotAccount : UBotAccount {
         return "Nameless User"
     }
 
-    override suspend fun login() {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun logout() {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun sendChatMessage(type: Int, source: String, target: String, message: String) {
         TODO("Not yet implemented")
     }
