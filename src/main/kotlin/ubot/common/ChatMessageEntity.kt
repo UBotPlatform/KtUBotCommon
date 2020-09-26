@@ -9,7 +9,7 @@ data class ChatMessageEntity(val type: String, val data: String) {
 
     init {
         if (!typePattern.matches(type)) {
-            throw IllegalArgumentException("invaild entity type")
+            throw IllegalArgumentException("invalid entity type")
         }
     }
 }
