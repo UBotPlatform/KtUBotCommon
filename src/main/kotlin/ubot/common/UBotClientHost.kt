@@ -1,9 +1,13 @@
 package ubot.common
 
+import io.ktor.client.*
+import io.ktor.client.features.websocket.*
+import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
+import io.ktor.http.*
+import io.ktor.http.cio.websocket.*
 import twitter.qiqiworld1.ktjsonrpcpeer.RpcChannel
-import twitter.qiqiworld1.ktjsonrpcpeer.RpcOkWebsocketOnceAdapter
-import okhttp3.*
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import twitter.qiqiworld1.ktjsonrpcpeer.RpcKtorWebSocketAdapter
 import ubot.common.UBotAccount.Companion.applyTo
 import ubot.common.UBotApp.Companion.applyTo
 
@@ -11,82 +15,99 @@ import ubot.common.UBotApp.Companion.applyTo
 object UBotClientHost {
     private suspend fun dialRouter(op: String,
                                    urlStr: String,
-                                   registerClient: suspend (managerUrl: HttpUrl, manager: UBotManager) -> HttpUrl)
-            : Pair<WebSocket, RpcChannel> {
-        val okClient = OkHttpClient()
-        val clientUrl: HttpUrl
-
-        //okhttp always requires http/https, though it's actually a WebSocket connection
-        val finalUrlStr: String = when {
-            urlStr.startsWith("ws:", ignoreCase = true) ->
-                "http:${urlStr.substring(3)}"
-            urlStr.startsWith("wss:", ignoreCase = true) ->
-                "https:${urlStr.substring(4)}"
-            else ->
-                urlStr
-        }
+                                   registerClient: suspend (managerUrl: Url, manager: UBotManager) -> Url)
+            : Pair<WebSocketSession, RpcChannel> {
+        val httpClient = HttpClient()
+        val urlParam = URLBuilder().takeFrom(urlStr).build()
+        val clientUrl: Url
         when (op.toLowerCase()) {
             "ApplyTo".toLowerCase() -> {
-                var managerUrl = finalUrlStr.toHttpUrl()
-                if (managerUrl.username != "" || managerUrl.password != "") {
-                    val user = managerUrl.username
-                    val password = managerUrl.password
-                    val getTokenUrl = managerUrl.newBuilder()
-                            .username("")
-                            .password("")
-                            .encodedPath("/api/manager/get_token")
-                            .build()
-                    val managerToken = okClient.newCall(Request.Builder()
-                            .url(getTokenUrl)
-                            .post(FormBody.Builder()
-                                    .add("user", user)
-                                    .add("password", password)
-                                    .build())
-                            .build())
-                            .execute().body!!.string()
-                    managerUrl = managerUrl.newBuilder()
-                            .username("")
-                            .password("")
-                            .setQueryParameter("token", managerToken)
-                            .build()
+                val managerUrl: Url
+                val tls = when (urlParam.protocol) {
+                    URLProtocol.WSS -> true
+                    URLProtocol.HTTPS -> true
+                    else -> false
                 }
-                val managerRequest: Request = Request.Builder()
-                        .url(managerUrl)
-                        .build()
-                val managerRpcAdapter = RpcOkWebsocketOnceAdapter()
-                val managerConn = okClient.newWebSocket(managerRequest, managerRpcAdapter)
+                if (urlParam.user != null || urlParam.password != null) {
+                    val user = urlParam.user ?: ""
+                    val password = urlParam.password ?: ""
+                    val getTokenUrl = Url(
+                            if (tls)
+                                URLProtocol.HTTPS
+                            else
+                                URLProtocol.HTTP,
+                            urlParam.host,
+                            urlParam.port,
+                            "/api/manager/get_token",
+                            urlParam.parameters,
+                            urlParam.fragment,
+                            null,
+                            null,
+                            urlParam.trailingQuery
+                    )
+                    val managerToken = httpClient.post<String>(getTokenUrl) {
+                        body = FormDataContent(Parameters.build {
+                            append("user", user)
+                            append("password", password)
+                        })
+                    }
+                    managerUrl = Url(
+                            if (tls)
+                                URLProtocol.WSS
+                            else
+                                URLProtocol.WS,
+                            urlParam.host,
+                            urlParam.port,
+                            urlParam.encodedPath,
+                            Parameters.build {
+                                appendAll(urlParam.parameters)
+                                append("token", managerToken)
+                            },
+                            urlParam.fragment,
+                            null,
+                            null,
+                            urlParam.trailingQuery
+                    )
+                } else {
+                    managerUrl = urlParam
+                }
+                val managerConn = httpClient.webSocketSession {
+                    url(managerUrl)
+                }
+                val managerRpcAdapter = RpcKtorWebSocketAdapter(managerConn)
+                var managerRpcChannel: RpcChannel? = null
                 try {
-                    val managerRpcChannel = RpcChannel(managerRpcAdapter)
+                    managerRpcChannel = RpcChannel(managerRpcAdapter)
                     clientUrl = registerClient(managerUrl, UBotManager.of(managerRpcChannel))
                 } finally {
-                    managerConn.close(1000, null)
+                    managerConn.close()
+                    managerRpcChannel?.completion?.await()
                 }
             }
             "Connect".toLowerCase() -> {
-                clientUrl = finalUrlStr.toHttpUrl()
+                clientUrl = urlParam
             }
             else -> {
                 throw IllegalArgumentException("invalid op")
             }
         }
-        val rpcAdapter = RpcOkWebsocketOnceAdapter()
-        val request: Request = Request.Builder()
-                .url(clientUrl)
-                .build()
-        val conn = okClient.newWebSocket(request, rpcAdapter)
+        val conn = httpClient.webSocketSession {
+            url(clientUrl)
+        }
+        val rpcAdapter = RpcKtorWebSocketAdapter(conn)
         val rpcChannel = RpcChannel(rpcAdapter)
         return Pair(conn, rpcChannel)
     }
 
     private suspend fun host(op: String, urlStr: String,
-                             registerClient: suspend (managerUrl: HttpUrl, manager: UBotManager) -> HttpUrl,
+                             registerClient: suspend (managerUrl: Url, manager: UBotManager) -> Url,
                              startup: suspend (rpc: RpcChannel) -> Unit) {
-        var channel: Pair<WebSocket, RpcChannel>? = null
+        var channel: Pair<WebSocketSession, RpcChannel>? = null
         for (retryCount in 1..5) {
             try {
                 channel = dialRouter(op, urlStr, registerClient)
                 break
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 println("Failed to connect to UBot Router, it will try again in 5 seconds.")
                 e.printStackTrace()
             }
@@ -95,34 +116,51 @@ object UBotClientHost {
             throw Exception("Failed to connect to UBot Router after 5 attempts.")
         }
         println("Connection established")
-        startup(channel.second)
-        channel.second.completion.await()
         try {
-            channel.first.close(1000, null)
-        } catch (e: Exception) {
-
+            startup(channel.second)
+            channel.second.completion.await()
+        } finally {
+            channel.first.close()
         }
     }
 
     suspend fun hostApp(op: String, urlStr: String, id: String, load: suspend (appApi: UBotAppApi) -> UBotApp) {
-        host(op, urlStr, { managerUrl, manager ->
-            managerUrl.newBuilder()
-                    .encodedPath("/api/app")
-                    .setQueryParameter("id", id)
-                    .setQueryParameter("token", manager.registerApp(id))
-                    .build()
+        host(op, urlStr, { urlParam, manager ->
+            Url(
+                    urlParam.protocol,
+                    urlParam.host,
+                    urlParam.port,
+                    "/api/app",
+                    Parameters.build {
+                        append("id", id)
+                        append("token", manager.registerApp(id))
+                    },
+                    urlParam.fragment,
+                    urlParam.user,
+                    urlParam.password,
+                    urlParam.trailingQuery
+            )
         }, { rpc ->
             load(UBotAppApi.of(rpc)).applyTo(rpc)
         })
     }
 
     suspend fun hostAccount(op: String, urlStr: String, id: String, load: suspend (e: UBotAccountEventEmitter) -> UBotAccount) {
-        host(op, urlStr, { managerUrl, manager ->
-            managerUrl.newBuilder()
-                    .encodedPath("/api/account")
-                    .setQueryParameter("id", id)
-                    .setQueryParameter("token", manager.registerAccount(id))
-                    .build()
+        host(op, urlStr, { urlParam, manager ->
+            Url(
+                    urlParam.protocol,
+                    urlParam.host,
+                    urlParam.port,
+                    "/api/account",
+                    Parameters.build {
+                        append("id", id)
+                        append("token", manager.registerAccount(id))
+                    },
+                    urlParam.fragment,
+                    urlParam.user,
+                    urlParam.password,
+                    urlParam.trailingQuery
+            )
         }, { rpc ->
             load(UBotAccountEventEmitter.of(rpc)).applyTo(rpc)
         })
