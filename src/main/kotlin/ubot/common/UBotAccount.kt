@@ -1,7 +1,7 @@
 package ubot.common
 
 import kotlinx.serialization.json.JsonElement
-import ktjsonrpcpeer.RpcChannel
+import twitter.qiqiworld1.ktjsonrpcpeer.RpcChannel
 
 interface UBotAccount {
     suspend fun getGroupName(id: String): String

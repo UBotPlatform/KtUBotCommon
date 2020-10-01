@@ -1,6 +1,6 @@
 package ubot.common
 
-import ktjsonrpcpeer.RpcChannel
+import twitter.qiqiworld1.ktjsonrpcpeer.RpcChannel
 
 interface UBotAccountEventEmitter {
     suspend fun onReceiveChatMessage(type: Int, source: String, sender: String, message: String, info: ChatMessageInfo)

@@ -1,7 +1,7 @@
 package ubot.common
 
 import kotlinx.serialization.json.JsonElement
-import ktjsonrpcpeer.RpcChannel
+import twitter.qiqiworld1.ktjsonrpcpeer.RpcChannel
 
 interface UBotApp {
     suspend fun onReceiveChatMessage(bot: String, type: Int, source: String, sender: String, message: String, info: ChatMessageInfo): UBotEventResult

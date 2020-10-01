@@ -4,15 +4,22 @@ plugins {
     `java-library`
     `maven-publish`
 }
+kotlin {
+    target {
+        compilations.all {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+    }
+}
 repositories {
-    maven("https://www.jitpack.io")
     jcenter()
 }
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0-RC2")
-    api("com.github.1354092549:ktjsonrpcpeer:v0.3.3")
+    implementation("com.squareup.okhttp3:okhttp:4.8.1")
+    implementation("twitter.qiqiworld1.ktjsonrpcpeer:ktjsonrpcpeer:0.6.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }

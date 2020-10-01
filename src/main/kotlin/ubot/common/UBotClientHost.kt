@@ -1,7 +1,7 @@
 package ubot.common
 
-import ktjsonrpcpeer.RpcChannel
-import ktjsonrpcpeer.RpcOkWebsocketOnceAdapter
+import twitter.qiqiworld1.ktjsonrpcpeer.RpcChannel
+import twitter.qiqiworld1.ktjsonrpcpeer.RpcOkWebsocketOnceAdapter
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import ubot.common.UBotAccount.Companion.applyTo

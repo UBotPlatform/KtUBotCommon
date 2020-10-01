@@ -2,7 +2,7 @@ package ubot.common
 
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
-import ktjsonrpcpeer.RpcChannel
+import twitter.qiqiworld1.ktjsonrpcpeer.RpcChannel
 
 internal class UBotManagerProxy constructor(private val rpc: RpcChannel)
     : UBotManager {

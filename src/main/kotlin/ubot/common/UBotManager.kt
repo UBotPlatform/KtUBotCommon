@@ -1,6 +1,6 @@
 package ubot.common
 
-import ktjsonrpcpeer.RpcChannel
+import twitter.qiqiworld1.ktjsonrpcpeer.RpcChannel
 
 interface UBotManager {
     suspend fun registerApp(id: String): String
