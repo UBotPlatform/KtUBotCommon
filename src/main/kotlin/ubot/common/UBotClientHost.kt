@@ -17,7 +17,9 @@ object UBotClientHost {
                                    urlStr: String,
                                    registerClient: suspend (managerUrl: Url, manager: UBotManager) -> Url)
             : Pair<WebSocketSession, RpcChannel> {
-        val httpClient = HttpClient()
+        val httpClient = HttpClient {
+            install(WebSockets)
+        }
         val urlParam = URLBuilder().takeFrom(urlStr).build()
         val clientUrl: Url
         when (op.toLowerCase()) {

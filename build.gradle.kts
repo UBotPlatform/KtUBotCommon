@@ -28,7 +28,7 @@ configure<PublishingExtension> {
         create<MavenPublication>("maven") {
             groupId = "ubot"
             artifactId = "common"
-            version = "0.4.3"
+            version = "0.4.4"
             from(components["java"])
         }
     }
