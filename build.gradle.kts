@@ -19,7 +19,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0-RC2")
     implementation("io.ktor:ktor-client-core:1.4.1")
-    implementation("twitter.qiqiworld1.ktjsonrpcpeer:ktjsonrpcpeer:0.6.0")
+    implementation("twitter.qiqiworld1.ktjsonrpcpeer:ktjsonrpcpeer:0.6.1")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }
@@ -28,7 +28,7 @@ configure<PublishingExtension> {
         create<MavenPublication>("maven") {
             groupId = "ubot"
             artifactId = "common"
-            version = "0.4.4"
+            version = "0.4.5"
             from(components["java"])
         }
     }
