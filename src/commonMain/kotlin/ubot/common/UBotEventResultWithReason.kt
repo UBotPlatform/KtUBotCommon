@@ -1,5 +1,4 @@
 package ubot.common
-
 import kotlinx.serialization.Serializable
 
 @Serializable

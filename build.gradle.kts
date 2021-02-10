@@ -1,35 +1,71 @@
 plugins {
-    kotlin("jvm") version "1.4.10"
+    kotlin("multiplatform") version "1.4.10"
     kotlin("plugin.serialization") version "1.4.10"
-    `java-library`
     `maven-publish`
 }
+group = "com.github.UBotPlatform.KtUBotCommon"
+if (version.toString() == "unspecified") {
+    version = "0.5.0"
+}
 kotlin {
-    target {
+    jvm {
         compilations.all {
             kotlinOptions.jvmTarget = "1.8"
         }
     }
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0")
+                implementation("io.ktor:ktor-client-core:1.4.1")
+                implementation("com.github.ArcticLampyrid.KtJsonRpcPeer:KtJsonRpcPeer:0.7.0")
+            }
+        }
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+            }
+        }
+        val jvmMain by getting {
+        }
+        val jvmTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+            }
+        }
+    }
 }
 repositories {
-    jcenter()
-}
-dependencies {
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0-RC2")
-    implementation("io.ktor:ktor-client-core:1.4.1")
-    implementation("twitter.qiqiworld1.ktjsonrpcpeer:ktjsonrpcpeer:0.6.1")
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+    mavenCentral()
+    maven("https://jitpack.io")
 }
 configure<PublishingExtension> {
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = "ubot"
-            artifactId = "common"
-            version = "0.4.5"
-            from(components["java"])
+    publications.withType<MavenPublication>().configureEach {
+        pom {
+            name.set("KtUBotCommon")
+            description.set("KtUBotCommon, UBot SDK for Kotlin.")
+            url.set("https://github.com/UBotPlatform/KtUBotCommon")
+            licenses {
+                license {
+                    name.set("BSD 3-Clause \"New\" or \"Revised\" License")
+                    url.set("https://github.com/UBotPlatform/KtUBotCommon/blob/master/LICENSE.md")
+                    distribution.set("repo")
+                }
+            }
+            developers {
+                developer {
+                    id.set("ArcticLampyrid")
+                    name.set("ArcticLampyrid")
+                    email.set("ArcticLampyrid@outlook.com")
+                    timezone.set("Asia/Shanghai")
+                }
+            }
+            scm {
+                url.set("https://github.com/UBotPlatform/KtUBotCommon")
+                connection.set("scm:git:git://github.com/UBotPlatform/KtUBotCommon.git")
+                developerConnection.set("scm:git:ssh://github.com:UBotPlatform/KtUBotCommon.git")
+            }
         }
     }
 }

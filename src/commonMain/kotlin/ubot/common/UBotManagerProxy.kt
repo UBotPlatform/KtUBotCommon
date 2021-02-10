@@ -1,11 +1,10 @@
 package ubot.common
 
+import com.github.arcticlampyrid.ktjsonrpcpeer.RpcChannel
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
-import twitter.qiqiworld1.ktjsonrpcpeer.RpcChannel
 
-internal class UBotManagerProxy constructor(private val rpc: RpcChannel)
-    : UBotManager {
+internal class UBotManagerProxy constructor(private val rpc: RpcChannel) : UBotManager {
     override suspend fun registerApp(id: String): String {
         return rpc.call("register_app", buildJsonArray {
             add(id)

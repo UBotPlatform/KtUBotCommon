@@ -1,5 +1,7 @@
 package ubot.common
 
+import ubot.common.utils.toCodePoint
+
 class ChatMessageBuilder {
     private val result = StringBuilder()
     fun add(content: String): ChatMessageBuilder {
@@ -27,7 +29,7 @@ class ChatMessageBuilder {
                     } else {
                         result.append(content, chunkStart, i)
                         result.append("\\u{")
-                        result.append(String.format("%x", Character.toCodePoint(content[i], content[i + 1])))
+                        result.append(Char.toCodePoint(content[i], content[i + 1]).toString(16))
                         result.append("}")
                         i += 2
                         chunkStart = i
@@ -42,7 +44,7 @@ class ChatMessageBuilder {
                 lowCodePointNeedEscape(content[i]) -> {
                     result.append(content, chunkStart, i)
                     result.append("\\u")
-                    result.append(String.format("%04x", content[i].toInt()))
+                    result.append(content[i].toInt().toString(16).padStart(4, '0'))
                     i++
                     chunkStart = i
                 }

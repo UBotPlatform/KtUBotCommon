@@ -1,14 +1,19 @@
 package ubot.common
 
+import com.github.arcticlampyrid.ktjsonrpcpeer.RpcChannel
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.encodeToJsonElement
-import twitter.qiqiworld1.ktjsonrpcpeer.RpcChannel
 
-internal class UBotAccountEventEmitterProxy constructor(private val rpc: RpcChannel)
-    : UBotAccountEventEmitter {
-    override suspend fun onReceiveChatMessage(type: Int, source: String, sender: String, message: String, info: ChatMessageInfo) {
+internal class UBotAccountEventEmitterProxy constructor(private val rpc: RpcChannel) : UBotAccountEventEmitter {
+    override suspend fun onReceiveChatMessage(
+        type: Int,
+        source: String,
+        sender: String,
+        message: String,
+        info: ChatMessageInfo
+    ) {
         return rpc.call("on_receive_chat_message", buildJsonArray {
             add(type)
             add(source)
@@ -33,7 +38,11 @@ internal class UBotAccountEventEmitterProxy constructor(private val rpc: RpcChan
         })
     }
 
-    override suspend fun processGroupInvitation(sender: String, target: String, reason: String): UBotEventResultWithReason {
+    override suspend fun processGroupInvitation(
+        sender: String,
+        target: String,
+        reason: String
+    ): UBotEventResultWithReason {
         return rpc.call("process_group_invitation", buildJsonArray {
             add(sender)
             add(target)
@@ -48,7 +57,12 @@ internal class UBotAccountEventEmitterProxy constructor(private val rpc: RpcChan
         })
     }
 
-    override suspend fun processMembershipRequest(source: String, sender: String, inviter: String, reason: String): UBotEventResultWithReason {
+    override suspend fun processMembershipRequest(
+        source: String,
+        sender: String,
+        inviter: String,
+        reason: String
+    ): UBotEventResultWithReason {
         return rpc.call("process_membership_request", buildJsonArray {
             add(source)
             add(sender)

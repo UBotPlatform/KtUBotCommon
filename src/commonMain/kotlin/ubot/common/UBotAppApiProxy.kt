@@ -1,11 +1,10 @@
 package ubot.common
 
+import com.github.arcticlampyrid.ktjsonrpcpeer.RpcChannel
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
-import twitter.qiqiworld1.ktjsonrpcpeer.RpcChannel
 
-internal class UBotAppApiProxy constructor(private val rpc: RpcChannel)
-    : UBotAppApi {
+internal class UBotAppApiProxy constructor(private val rpc: RpcChannel) : UBotAppApi {
     override suspend fun getGroupName(bot: String, id: String): String {
         return rpc.call("get_group_name", buildJsonArray {
             add(bot)

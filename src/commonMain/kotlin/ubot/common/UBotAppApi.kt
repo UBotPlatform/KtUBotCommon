@@ -1,6 +1,6 @@
 package ubot.common
 
-import twitter.qiqiworld1.ktjsonrpcpeer.RpcChannel
+import com.github.arcticlampyrid.ktjsonrpcpeer.RpcChannel
 
 interface UBotAppApi {
     suspend fun getGroupName(bot: String, id: String): String

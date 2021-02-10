@@ -1,5 +1,7 @@
 package ubot.common
 
+import ubot.common.utils.appendCodePoint
+
 object ChatMessageParser {
     fun Parse(content: String): Sequence<ChatMessageEntity> {
         return sequence {
