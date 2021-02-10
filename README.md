@@ -3,7 +3,7 @@
 UBot is an open source platform for developing chat bots. It provides consistent apis for different platforms (telegram,
 discord and more!) in a language-independent way, making bot development WORA-able (Write once, Run anywhere).
 
-## About UBot.Common.Kotlin
+## About KtUBotCommon
 
 This library provides a lot of helper functions for writing UBot Components (Account / App) with Kotlin JVM (other
 languages on JVM may be ok, but it will be troublesome since this project use Kotlin Coroutines a lot).
@@ -11,7 +11,7 @@ languages on JVM may be ok, but it will be troublesome since this project use Ko
 ## Usage
 
 It's strongly recommended to use this package with [JitPack](https://jitpack.io/)  
-[![](https://jitpack.io/v/UBotPlatform/Ubot.Common.Kotlin.svg)](https://jitpack.io/#UBotPlatform/Ubot.Common.Kotlin)
+[![](https://jitpack.io/v/UBotPlatform/KtUBotCommon.svg)](https://jitpack.io/#UBotPlatform/KtUBotCommon)
 
 ## License
 

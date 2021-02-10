@@ -1,1 +1,1 @@
-rootProject.name = "ubot.common"
+rootProject.name = "KtUBotCommon"
