@@ -8,20 +8,19 @@ import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
+import io.ktor.utils.io.core.*
+import kotlinx.coroutines.cancel
 import ubot.common.UBotAccount.Companion.applyTo
 import ubot.common.UBotApp.Companion.applyTo
 
 
 object UBotClientHost {
     private suspend fun dialRouter(
+        httpClient: HttpClient,
         op: String,
         urlStr: String,
         registerClient: suspend (managerUrl: Url, manager: UBotManager) -> Url
-    )
-            : Pair<WebSocketSession, RpcChannel> {
-        val httpClient = HttpClient {
-            install(WebSockets)
-        }
+    ): Pair<WebSocketSession, RpcChannel> {
         val urlParam = URLBuilder().takeFrom(urlStr).build()
         val clientUrl: Url
         when (op.toLowerCase()) {
@@ -84,8 +83,11 @@ object UBotClientHost {
                     managerRpcChannel = RpcChannel(managerRpcAdapter)
                     clientUrl = registerClient(managerUrl, UBotManager.of(managerRpcChannel))
                 } finally {
+                    managerRpcChannel?.apply {
+                        cancel()
+                        join()
+                    }
                     managerConn.close()
-                    managerRpcChannel?.completion?.await()
                 }
             }
             "Connect".toLowerCase() -> {
@@ -108,25 +110,29 @@ object UBotClientHost {
         registerClient: suspend (managerUrl: Url, manager: UBotManager) -> Url,
         startup: suspend (rpc: RpcChannel) -> Unit
     ) {
-        var channel: Pair<WebSocketSession, RpcChannel>? = null
-        for (retryCount in 1..5) {
-            try {
-                channel = dialRouter(op, urlStr, registerClient)
-                break
-            } catch (e: Throwable) {
-                println("Failed to connect to UBot Router, it will try again in 5 seconds.")
-                e.printStackTrace()
+        HttpClient {
+            install(WebSockets)
+        }.use { httpClient ->
+            var channel: Pair<WebSocketSession, RpcChannel>? = null
+            for (retryCount in 1..5) {
+                try {
+                    channel = dialRouter(httpClient, op, urlStr, registerClient)
+                    break
+                } catch (e: Throwable) {
+                    println("Failed to connect to UBot Router, it will try again in 5 seconds.")
+                    e.printStackTrace()
+                }
             }
-        }
-        if (channel == null) {
-            throw Exception("Failed to connect to UBot Router after 5 attempts.")
-        }
-        println("Connection established")
-        try {
-            startup(channel.second)
-            channel.second.completion.await()
-        } finally {
-            channel.first.close()
+            if (channel == null) {
+                throw Exception("Failed to connect to UBot Router after 5 attempts.")
+            }
+            println("Connection established")
+            try {
+                startup(channel.second)
+                channel.second.join()
+            } finally {
+                channel.first.close()
+            }
         }
     }
 

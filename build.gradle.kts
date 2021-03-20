@@ -18,7 +18,7 @@ kotlin {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0")
                 implementation("io.ktor:ktor-client-core:1.4.1")
-                implementation("com.github.ArcticLampyrid.KtJsonRpcPeer:KtJsonRpcPeer:0.7.0")
+                implementation("com.github.ArcticLampyrid.KtJsonRpcPeer:KtJsonRpcPeer:0.8.0")
             }
         }
         val commonTest by getting {
