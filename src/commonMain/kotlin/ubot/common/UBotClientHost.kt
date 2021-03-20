@@ -10,11 +10,13 @@ import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.cancel
+import mu.KotlinLogging
 import ubot.common.UBotAccount.Companion.applyTo
 import ubot.common.UBotApp.Companion.applyTo
 
 
 object UBotClientHost {
+    private val logger = KotlinLogging.logger("UBotClientHost")
     private suspend fun dialRouter(
         httpClient: HttpClient,
         op: String,
@@ -54,6 +56,7 @@ object UBotClientHost {
                             append("password", password)
                         })
                     }
+                    logger.trace { "Got manager token: $managerToken" }
                     managerUrl = Url(
                         if (tls)
                             URLProtocol.WSS
@@ -74,6 +77,7 @@ object UBotClientHost {
                 } else {
                     managerUrl = urlParam
                 }
+                logger.trace { "Applying to $managerUrl" }
                 val managerConn = httpClient.webSocketSession {
                     url(managerUrl)
                 }
@@ -97,6 +101,7 @@ object UBotClientHost {
                 throw IllegalArgumentException("invalid op")
             }
         }
+        logger.trace { "Connecting to $clientUrl" }
         val conn = httpClient.webSocketSession {
             url(clientUrl)
         }
@@ -119,14 +124,13 @@ object UBotClientHost {
                     channel = dialRouter(httpClient, op, urlStr, registerClient)
                     break
                 } catch (e: Throwable) {
-                    println("Failed to connect to UBot Router, it will try again in 5 seconds.")
-                    e.printStackTrace()
+                    logger.error(e) { "Failed to connect to UBot Router, it will try again in 5 seconds." }
                 }
             }
             if (channel == null) {
                 throw Exception("Failed to connect to UBot Router after 5 attempts.")
             }
-            println("Connection established")
+            logger.info { "Connected to UBot Router" }
             try {
                 startup(channel.second)
                 channel.second.join()

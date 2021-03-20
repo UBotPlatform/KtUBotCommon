@@ -5,7 +5,7 @@ plugins {
 }
 group = "com.github.UBotPlatform.KtUBotCommon"
 if (version.toString() == "unspecified") {
-    version = "0.5.0"
+    version = "0.5.1"
 }
 kotlin {
     jvm {
@@ -19,6 +19,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0")
                 implementation("io.ktor:ktor-client-core:1.4.1")
                 implementation("com.github.ArcticLampyrid.KtJsonRpcPeer:KtJsonRpcPeer:0.8.0")
+                implementation("io.github.microutils:kotlin-logging:2.0.6")
             }
         }
         val commonTest by getting {
