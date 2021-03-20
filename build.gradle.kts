@@ -5,7 +5,7 @@ plugins {
 }
 group = "com.github.UBotPlatform.KtUBotCommon"
 if (version.toString() == "unspecified") {
-    version = "0.5.1"
+    version = "0.5.2"
 }
 kotlin {
     jvm {
