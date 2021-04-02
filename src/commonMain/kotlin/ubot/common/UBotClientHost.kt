@@ -13,6 +13,7 @@ import kotlinx.coroutines.cancel
 import mu.KotlinLogging
 import ubot.common.UBotAccount.Companion.applyTo
 import ubot.common.UBotApp.Companion.applyTo
+import kotlin.coroutines.coroutineContext
 
 
 object UBotClientHost {
@@ -84,13 +85,10 @@ object UBotClientHost {
                 val managerRpcAdapter = RpcKtorWebSocketAdapter(managerConn)
                 var managerRpcChannel: RpcChannel? = null
                 try {
-                    managerRpcChannel = RpcChannel(managerRpcAdapter)
+                    managerRpcChannel = RpcChannel(managerRpcAdapter, parentCoroutineContext = coroutineContext)
                     clientUrl = registerClient(managerUrl, UBotManager.of(managerRpcChannel))
                 } finally {
-                    managerRpcChannel?.apply {
-                        cancel()
-                        join()
-                    }
+                    managerRpcChannel?.cancelAndJoin()
                     managerConn.close()
                 }
             }
@@ -106,7 +104,7 @@ object UBotClientHost {
             url(clientUrl)
         }
         val rpcAdapter = RpcKtorWebSocketAdapter(conn)
-        val rpcChannel = RpcChannel(rpcAdapter)
+        val rpcChannel = RpcChannel(rpcAdapter, parentCoroutineContext = coroutineContext)
         return Pair(conn, rpcChannel)
     }
 
