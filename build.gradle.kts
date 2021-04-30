@@ -5,7 +5,7 @@ plugins {
 }
 group = "com.github.UBotPlatform.KtUBotCommon"
 if (version.toString() == "unspecified") {
-    version = "0.6.0"
+    version = "0.6.1"
 }
 kotlin {
     jvm {
@@ -16,9 +16,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
                 implementation("io.ktor:ktor-client-core:1.5.2")
-                implementation("com.github.ArcticLampyrid.KtJsonRpcPeer:KtJsonRpcPeer:0.9.0")
+                implementation("com.github.ArcticLampyrid.KtJsonRpcPeer:KtJsonRpcPeer:0.10.0")
                 implementation("io.github.microutils:kotlin-logging:2.0.6")
             }
         }
