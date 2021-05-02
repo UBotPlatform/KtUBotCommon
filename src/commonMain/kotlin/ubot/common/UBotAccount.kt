@@ -1,6 +1,7 @@
 package ubot.common
 
 import com.github.arcticlampyrid.ktjsonrpcpeer.RpcChannel
+import com.github.arcticlampyrid.ktjsonrpcpeer.RpcServiceDsl
 import kotlinx.serialization.json.JsonElement
 
 interface UBotAccount {
@@ -18,7 +19,7 @@ interface UBotAccount {
     suspend fun getMemberList(id: String): Array<String>
 
     companion object {
-        fun UBotAccount.applyTo(rpc: RpcChannel) {
+        fun UBotAccount.applyTo(rpc: RpcServiceDsl) {
             rpc.register<String, JsonElement>("get_group_name") { params ->
                 this.getGroupName(
                     RpcChannel.readParam(params, 0, "id") ?: ""

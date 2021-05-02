@@ -1,6 +1,7 @@
 package ubot.common
 
 import com.github.arcticlampyrid.ktjsonrpcpeer.RpcChannel
+import com.github.arcticlampyrid.ktjsonrpcpeer.RpcServiceDsl
 import kotlinx.serialization.json.JsonElement
 
 interface UBotApp {
@@ -32,7 +33,7 @@ interface UBotApp {
     ): UBotEventResultWithReason
 
     companion object {
-        fun UBotApp.applyTo(rpc: RpcChannel) {
+        fun UBotApp.applyTo(rpc: RpcServiceDsl) {
             rpc.register<UBotEventResult, JsonElement>("on_receive_chat_message") { params ->
                 this.onReceiveChatMessage(
                     RpcChannel.readParam(params, 0, "bot") ?: "",

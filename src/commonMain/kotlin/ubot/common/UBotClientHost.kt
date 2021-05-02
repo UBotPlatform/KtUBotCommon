@@ -2,6 +2,8 @@ package ubot.common
 
 import com.github.arcticlampyrid.ktjsonrpcpeer.RpcChannel
 import com.github.arcticlampyrid.ktjsonrpcpeer.RpcKtorWebSocketAdapter
+import com.github.arcticlampyrid.ktjsonrpcpeer.RpcServiceDefiner
+import com.github.arcticlampyrid.ktjsonrpcpeer.build
 import io.ktor.client.*
 import io.ktor.client.features.websocket.*
 import io.ktor.client.request.*
@@ -9,7 +11,6 @@ import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.utils.io.core.*
-import kotlinx.coroutines.cancel
 import mu.KotlinLogging
 import ubot.common.UBotAccount.Companion.applyTo
 import ubot.common.UBotApp.Companion.applyTo
@@ -155,7 +156,10 @@ object UBotClientHost {
                 urlParam.trailingQuery
             )
         }, { rpc ->
-            load(UBotAppApi.of(rpc)).applyTo(rpc)
+            val impl = load(UBotAppApi.of(rpc))
+            rpc.service = RpcServiceDefiner {
+                impl.applyTo(this)
+            }.build()
         })
     }
 
@@ -181,7 +185,10 @@ object UBotClientHost {
                 urlParam.trailingQuery
             )
         }, { rpc ->
-            load(UBotAccountEventEmitter.of(rpc)).applyTo(rpc)
+            val impl = load(UBotAccountEventEmitter.of(rpc))
+            rpc.service = RpcServiceDefiner {
+                impl.applyTo(this)
+            }.build()
         })
     }
 }
