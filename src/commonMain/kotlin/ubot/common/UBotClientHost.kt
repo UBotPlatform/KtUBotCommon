@@ -27,8 +27,8 @@ object UBotClientHost {
     ): Pair<WebSocketSession, RpcChannel> {
         val urlParam = URLBuilder().takeFrom(urlStr).build()
         val clientUrl: Url
-        when (op.toLowerCase()) {
-            "ApplyTo".toLowerCase() -> {
+        when (op.lowercase()) {
+            "ApplyTo".lowercase() -> {
                 val managerUrl: Url
                 val tls = when (urlParam.protocol) {
                     URLProtocol.WSS -> true
@@ -93,7 +93,7 @@ object UBotClientHost {
                     managerConn.close()
                 }
             }
-            "Connect".toLowerCase() -> {
+            "Connect".lowercase() -> {
                 clientUrl = urlParam
             }
             else -> {

@@ -44,7 +44,7 @@ class ChatMessageBuilder {
                 lowCodePointNeedEscape(content[i]) -> {
                     result.append(content, chunkStart, i)
                     result.append("\\u")
-                    result.append(content[i].toInt().toString(16).padStart(4, '0'))
+                    result.append(content[i].code.toString(16).padStart(4, '0'))
                     i++
                     chunkStart = i
                 }
@@ -79,7 +79,7 @@ class ChatMessageBuilder {
 
 
     private fun lowCodePointNeedEscape(codePoint: Char): Boolean {
-        val c = codePoint.toInt()
+        val c = codePoint.code
         return c in 0xA9..0xAE || c in 0x200D..0x3299
     }
 
