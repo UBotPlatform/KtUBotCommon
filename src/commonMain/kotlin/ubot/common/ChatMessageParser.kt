@@ -3,18 +3,57 @@ package ubot.common
 import ubot.common.utils.appendCodePoint
 
 object ChatMessageParser {
-    fun Parse(content: String): Sequence<ChatMessageEntity> {
+    fun parse(content: String): Sequence<ChatMessageEntity> {
         return sequence {
             val data = StringBuilder()
             var inBracket = false
-            var type = "text"
+            var type = ""
             var start = 0
             var count = 0
             var i = 0
-            val flushBuf = {
+            var args = ArrayList<String>(1)
+            var namedArgs: MutableMap<String, String>? = null
+            var isNamedArg = false
+            var argName = ""
+            fun flushBuf() {
                 data.append(content, start, start + count)
                 start = i + 1
                 count = 0
+            }
+
+            fun finishArg() {
+                flushBuf()
+                if (isNamedArg) {
+                    if (namedArgs == null) {
+                        namedArgs = LinkedHashMap()
+                    }
+                    namedArgs!![argName] = data.toString()
+                } else {
+                    args.add(data.toString())
+                }
+                data.clear()
+                argName = ""
+                isNamedArg = false
+            }
+
+            suspend fun SequenceScope<ChatMessageEntity>.endText() {
+                flushBuf()
+                if (data.isNotEmpty()) {
+                    yield(ChatMessageEntity(data.toString()))
+                }
+                data.clear()
+            }
+
+            suspend fun SequenceScope<ChatMessageEntity>.beginEntity(newType: String) {
+                endText()
+                type = newType
+            }
+
+            suspend fun SequenceScope<ChatMessageEntity>.endEntity() {
+                finishArg()
+                yield(ChatMessageEntity(type, args, namedArgs ?: emptyMap()))
+                args = ArrayList(1)
+                namedArgs = null
             }
             loop@ while (i < content.length) {
                 when {
@@ -27,12 +66,7 @@ object ChatMessageParser {
                             val newType = content.substring(i + 1, j)
                             if (ChatMessageEntity.isValidMsgType(newType)) {
                                 i = j
-                                flushBuf()
-                                if (data.isNotEmpty() || type != "text") {
-                                    yield(ChatMessageEntity(type, data.toString()))
-                                }
-                                data.clear()
-                                type = newType
+                                beginEntity(newType)
                                 inBracket = true
                                 i++
                                 continue@loop
@@ -42,19 +76,25 @@ object ChatMessageParser {
                         i++
                     }
                     content[i] == ']' && inBracket -> {
-                        flushBuf()
-                        if (data.isNotEmpty() || type != "text") {
-                            yield(ChatMessageEntity(type, data.toString()))
-                        }
-                        data.clear()
-                        type = "text"
+                        endEntity()
                         inBracket = false
+                        i++
+                    }
+                    content[i] == ',' && inBracket -> {
+                        finishArg()
+                        i++
+                    }
+                    content[i] == '=' && inBracket && !isNamedArg -> {
+                        flushBuf()
+                        argName = data.toString()
+                        isNamedArg = true
+                        data.clear()
                         i++
                     }
                     content[i] == '\\' && i + 1 < content.length -> {
                         i++
                         when {
-                            content[i] in "\\[]" -> {
+                            content[i] in "\\[],=" -> {
                                 flushBuf()
                                 data.append(content[i])
                                 i++
@@ -114,12 +154,7 @@ object ChatMessageParser {
                     }
                 }
             }
-            if (count != 0) {
-                data.append(content, start, start + count)
-            }
-            if (data.isNotEmpty() || type != "text") {
-                yield(ChatMessageEntity(type, data.toString()))
-            }
+            endText()
         }
     }
 }
