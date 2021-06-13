@@ -25,7 +25,7 @@ object ChatMessageParser {
                         }
                         if (j < content.length && content[j] == ':') {
                             val newType = content.substring(i + 1, j)
-                            if (ChatMessageEntity.typePattern.matches(newType)) {
+                            if (ChatMessageEntity.isValidMsgType(newType)) {
                                 i = j
                                 flushBuf()
                                 if (data.isNotEmpty() || type != "text") {
