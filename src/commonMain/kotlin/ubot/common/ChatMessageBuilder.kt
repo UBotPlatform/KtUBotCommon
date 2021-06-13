@@ -79,8 +79,10 @@ class ChatMessageBuilder {
 
 
     private fun lowCodePointNeedEscape(codePoint: Char): Boolean {
-        val c = codePoint.code
-        return c in 0xA9..0xAE || c in 0x200D..0x3299
+        return when (codePoint) {
+            in '\u00A9'..'\u00AE', in '\u2580'..'\u2FFF' -> true
+            else -> false
+        }
     }
 
     fun build(): String {
