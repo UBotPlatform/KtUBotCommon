@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 class ChatMessageParserTest {
     @Test
     fun parseASimpleMessage() {
-        val r = ChatMessageParser.parse("""hello, \[go\]\u{1f606}\u303d[at:10000]""").toList()
+        val r = ChatMessageParser.parse("""hello, \[go\]\u{1f606}\u303d[at:10000]""")
         assertEquals(listOf(
             ChatMessageEntity("hello, [go]\uD83D\uDE06\u303d"),
             ChatMessageEntity("at", "10000")
@@ -15,7 +15,7 @@ class ChatMessageParserTest {
 
     @Test
     fun parseMessageWithArgs() {
-        val r = ChatMessageParser.parse("""[image:<url>1\,2\=3,md5=xxx][file:<xxx>,a=b]""").toList()
+        val r = ChatMessageParser.parse("""[image:<url>1\,2\=3,md5=xxx][file:<xxx>,a=b]""")
         assertEquals(listOf(
             ChatMessageEntity("image", listOf("<url>1,2=3"), mapOf("md5" to "xxx")),
             ChatMessageEntity("file", listOf("<xxx>"), mapOf("a" to "b"))
