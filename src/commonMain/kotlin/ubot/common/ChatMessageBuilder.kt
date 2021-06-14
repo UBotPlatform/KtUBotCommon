@@ -104,7 +104,10 @@ class ChatMessageBuilder {
      */
     fun add(entity: ChatMessageEntity): ChatMessageBuilder {
         if (entity.type == "" || entity.type == "text") {
-            return add(entity.args.firstOrNull() ?: "")
+            entity.args.firstOrNull()?.let {
+                add(it)
+            }
+            return this
         }
         result.append("[")
         result.append(entity.type)
