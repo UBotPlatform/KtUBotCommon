@@ -41,11 +41,11 @@ open class BaseUBotAccount : UBotAccount {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getGroupList(): Array<String> {
+    override suspend fun getGroupList(): List<String> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getMemberList(id: String): Array<String> {
+    override suspend fun getMemberList(id: String): List<String> {
         TODO("Not yet implemented")
     }
 }
