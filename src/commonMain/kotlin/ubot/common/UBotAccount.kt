@@ -1,6 +1,8 @@
 package ubot.common
 
 import com.github.arcticlampyrid.ktjsonrpcpeer.RpcServiceDsl
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.int
@@ -22,17 +24,17 @@ interface UBotAccount {
 
     companion object {
         fun UBotAccount.applyTo(rpc: RpcServiceDsl) {
-            rpc.register<String, JsonArray>("get_group_name") { params ->
+            rpc.register("get_group_name", String.serializer(), JsonArray.serializer()) { params ->
                 this.getGroupName(
                     params.getOrNull(0)?.jsonPrimitive?.content ?: ""
                 )
             }
-            rpc.register<String, JsonArray>("get_user_name") { params ->
+            rpc.register("get_user_name", String.serializer(), JsonArray.serializer()) { params ->
                 this.getUserName(
                     params.getOrNull(0)?.jsonPrimitive?.content ?: ""
                 )
             }
-            rpc.register<Unit, JsonArray>("send_chat_message") { params ->
+            rpc.register("send_chat_message", Unit.serializer(), JsonArray.serializer()) { params ->
                 this.sendChatMessage(
                     params.getOrNull(0)?.jsonPrimitive?.int ?: 0,
                     params.getOrNull(1)?.jsonPrimitive?.content ?: "",
@@ -40,46 +42,46 @@ interface UBotAccount {
                     params.getOrNull(3)?.jsonPrimitive?.content ?: ""
                 )
             }
-            rpc.register<Unit, JsonArray>("remove_member") { params ->
+            rpc.register("remove_member", Unit.serializer(), JsonArray.serializer()) { params ->
                 this.removeMember(
                     params.getOrNull(0)?.jsonPrimitive?.content ?: "",
                     params.getOrNull(1)?.jsonPrimitive?.content ?: ""
                 )
             }
-            rpc.register<Unit, JsonArray>("shutup_member") { params ->
+            rpc.register("shutup_member", Unit.serializer(), JsonArray.serializer()) { params ->
                 this.shutupMember(
                     params.getOrNull(0)?.jsonPrimitive?.content ?: "",
                     params.getOrNull(1)?.jsonPrimitive?.content ?: "",
                     params.getOrNull(2)?.jsonPrimitive?.int ?: 0
                 )
             }
-            rpc.register<Unit, JsonArray>("shutup_all_member") { params ->
+            rpc.register("shutup_all_member", Unit.serializer(), JsonArray.serializer()) { params ->
                 this.shutupAllMember(
                     params.getOrNull(0)?.jsonPrimitive?.content ?: "",
                     params.getOrNull(1)?.jsonPrimitive?.boolean ?: false
                 )
             }
-            rpc.register<String, JsonArray>("get_member_name") { params ->
+            rpc.register("get_member_name", String.serializer(), JsonArray.serializer()) { params ->
                 this.getMemberName(
                     params.getOrNull(0)?.jsonPrimitive?.content ?: "",
                     params.getOrNull(1)?.jsonPrimitive?.content ?: ""
                 )
             }
-            rpc.register<String, JsonArray>("get_user_avatar") { params ->
+            rpc.register("get_user_avatar", String.serializer(), JsonArray.serializer()) { params ->
                 this.getUserAvatar(
                     params.getOrNull(0)?.jsonPrimitive?.content ?: ""
                 )
             }
-            rpc.register<String, Unit>("get_self_id") { _ ->
+            rpc.register("get_self_id", String.serializer(), Unit.serializer()) { _ ->
                 this.getSelfID()
             }
-            rpc.register<String, Unit>("get_platform_id") { _ ->
+            rpc.register("get_platform_id", String.serializer(), Unit.serializer()) { _ ->
                 this.getPlatformID()
             }
-            rpc.register<List<String>, Unit>("get_group_list") { _ ->
+            rpc.register("get_group_list", ListSerializer(String.serializer()), Unit.serializer()) { _ ->
                 this.getGroupList()
             }
-            rpc.register<List<String>, JsonArray>("get_member_list") { params ->
+            rpc.register("get_member_list", ListSerializer(String.serializer()), JsonArray.serializer()) { params ->
                 this.getMemberList(
                     params.getOrNull(0)?.jsonPrimitive?.content ?: ""
                 )

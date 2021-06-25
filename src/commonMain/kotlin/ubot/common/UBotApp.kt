@@ -36,7 +36,7 @@ interface UBotApp {
 
     companion object {
         fun UBotApp.applyTo(rpc: RpcServiceDsl) {
-            rpc.register<UBotEventResult, JsonArray>("on_receive_chat_message") { params ->
+            rpc.register("on_receive_chat_message", UBotEventResult.serializer(), JsonArray.serializer()) { params ->
                 this.onReceiveChatMessage(
                     params.getOrNull(0)?.jsonPrimitive?.content ?: "",
                     params.getOrNull(1)?.jsonPrimitive?.int ?: 0,
@@ -48,7 +48,7 @@ interface UBotApp {
                     } ?: ChatMessageInfo()
                 )
             }
-            rpc.register<UBotEventResult, JsonArray>("on_member_joined") { params ->
+            rpc.register("on_member_joined", UBotEventResult.serializer(), JsonArray.serializer()) { params ->
                 this.onMemberJoined(
                     params.getOrNull(0)?.jsonPrimitive?.content ?: "",
                     params.getOrNull(1)?.jsonPrimitive?.content ?: "",
@@ -56,14 +56,18 @@ interface UBotApp {
                     params.getOrNull(3)?.jsonPrimitive?.content ?: "",
                 )
             }
-            rpc.register<UBotEventResult, JsonArray>("on_member_left") { params ->
+            rpc.register("on_member_left", UBotEventResult.serializer(), JsonArray.serializer()) { params ->
                 this.onMemberLeft(
                     params.getOrNull(0)?.jsonPrimitive?.content ?: "",
                     params.getOrNull(1)?.jsonPrimitive?.content ?: "",
                     params.getOrNull(2)?.jsonPrimitive?.content ?: "",
                 )
             }
-            rpc.register<UBotEventResultWithReason, JsonArray>("process_group_invitation") { params ->
+            rpc.register(
+                "process_group_invitation",
+                UBotEventResultWithReason.serializer(),
+                JsonArray.serializer()
+            ) { params ->
                 this.processGroupInvitation(
                     params.getOrNull(0)?.jsonPrimitive?.content ?: "",
                     params.getOrNull(1)?.jsonPrimitive?.content ?: "",
@@ -71,14 +75,22 @@ interface UBotApp {
                     params.getOrNull(3)?.jsonPrimitive?.content ?: "",
                 )
             }
-            rpc.register<UBotEventResultWithReason, JsonArray>("process_friend_request") { params ->
+            rpc.register(
+                "process_friend_request",
+                UBotEventResultWithReason.serializer(),
+                JsonArray.serializer()
+            ) { params ->
                 this.processFriendRequest(
                     params.getOrNull(0)?.jsonPrimitive?.content ?: "",
                     params.getOrNull(1)?.jsonPrimitive?.content ?: "",
                     params.getOrNull(2)?.jsonPrimitive?.content ?: "",
                 )
             }
-            rpc.register<UBotEventResultWithReason, JsonArray>("process_membership_request") { params ->
+            rpc.register(
+                "process_membership_request",
+                UBotEventResultWithReason.serializer(),
+                JsonArray.serializer()
+            ) { params ->
                 this.processMembershipRequest(
                     params.getOrNull(0)?.jsonPrimitive?.content ?: "",
                     params.getOrNull(1)?.jsonPrimitive?.content ?: "",
