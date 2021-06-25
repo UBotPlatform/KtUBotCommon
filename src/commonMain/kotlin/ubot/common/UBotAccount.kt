@@ -1,8 +1,10 @@
 package ubot.common
 
-import com.github.arcticlampyrid.ktjsonrpcpeer.RpcChannel
 import com.github.arcticlampyrid.ktjsonrpcpeer.RpcServiceDsl
-import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonPrimitive
 
 interface UBotAccount {
     suspend fun getGroupName(id: String): String
@@ -20,66 +22,66 @@ interface UBotAccount {
 
     companion object {
         fun UBotAccount.applyTo(rpc: RpcServiceDsl) {
-            rpc.register<String, JsonElement>("get_group_name") { params ->
+            rpc.register<String, JsonArray>("get_group_name") { params ->
                 this.getGroupName(
-                    RpcChannel.readParam(params, 0, "id") ?: ""
+                    params.getOrNull(0)?.jsonPrimitive?.content ?: ""
                 )
             }
-            rpc.register<String, JsonElement>("get_user_name") { params ->
+            rpc.register<String, JsonArray>("get_user_name") { params ->
                 this.getUserName(
-                    RpcChannel.readParam(params, 0, "id") ?: ""
+                    params.getOrNull(0)?.jsonPrimitive?.content ?: ""
                 )
             }
-            rpc.register<Unit, JsonElement>("send_chat_message") { params ->
+            rpc.register<Unit, JsonArray>("send_chat_message") { params ->
                 this.sendChatMessage(
-                    RpcChannel.readParam(params, 0, "type") ?: 0,
-                    RpcChannel.readParam(params, 1, "source") ?: "",
-                    RpcChannel.readParam(params, 2, "target") ?: "",
-                    RpcChannel.readParam(params, 3, "message") ?: ""
+                    params.getOrNull(0)?.jsonPrimitive?.int ?: 0,
+                    params.getOrNull(1)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(2)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(3)?.jsonPrimitive?.content ?: ""
                 )
             }
-            rpc.register<Unit, JsonElement>("remove_member") { params ->
+            rpc.register<Unit, JsonArray>("remove_member") { params ->
                 this.removeMember(
-                    RpcChannel.readParam(params, 0, "source") ?: "",
-                    RpcChannel.readParam(params, 1, "target") ?: ""
+                    params.getOrNull(0)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(1)?.jsonPrimitive?.content ?: ""
                 )
             }
-            rpc.register<Unit, JsonElement>("shutup_member") { params ->
+            rpc.register<Unit, JsonArray>("shutup_member") { params ->
                 this.shutupMember(
-                    RpcChannel.readParam(params, 0, "source") ?: "",
-                    RpcChannel.readParam(params, 1, "target") ?: "",
-                    RpcChannel.readParam(params, 2, "duration") ?: 0
+                    params.getOrNull(0)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(1)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(2)?.jsonPrimitive?.int ?: 0
                 )
             }
-            rpc.register<Unit, JsonElement>("shutup_all_member") { params ->
+            rpc.register<Unit, JsonArray>("shutup_all_member") { params ->
                 this.shutupAllMember(
-                    RpcChannel.readParam(params, 0, "source") ?: "",
-                    RpcChannel.readParam(params, 1, "switch") ?: false
+                    params.getOrNull(0)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(1)?.jsonPrimitive?.boolean ?: false
                 )
             }
-            rpc.register<String, JsonElement>("get_member_name") { params ->
+            rpc.register<String, JsonArray>("get_member_name") { params ->
                 this.getMemberName(
-                    RpcChannel.readParam(params, 0, "source") ?: "",
-                    RpcChannel.readParam(params, 1, "target") ?: ""
+                    params.getOrNull(0)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(1)?.jsonPrimitive?.content ?: ""
                 )
             }
-            rpc.register<String, JsonElement>("get_user_avatar") { params ->
+            rpc.register<String, JsonArray>("get_user_avatar") { params ->
                 this.getUserAvatar(
-                    RpcChannel.readParam(params, 0, "id") ?: ""
+                    params.getOrNull(0)?.jsonPrimitive?.content ?: ""
                 )
             }
-            rpc.register<String, JsonElement>("get_self_id") { _ ->
+            rpc.register<String, Unit>("get_self_id") { _ ->
                 this.getSelfID()
             }
-            rpc.register<String, JsonElement>("get_platform_id") { _ ->
+            rpc.register<String, Unit>("get_platform_id") { _ ->
                 this.getPlatformID()
             }
-            rpc.register<List<String>, JsonElement>("get_group_list") { _ ->
+            rpc.register<List<String>, Unit>("get_group_list") { _ ->
                 this.getGroupList()
             }
-            rpc.register<List<String>, JsonElement>("get_member_list") { params ->
+            rpc.register<List<String>, JsonArray>("get_member_list") { params ->
                 this.getMemberList(
-                    RpcChannel.readParam(params, 0, "id") ?: ""
+                    params.getOrNull(0)?.jsonPrimitive?.content ?: ""
                 )
             }
         }

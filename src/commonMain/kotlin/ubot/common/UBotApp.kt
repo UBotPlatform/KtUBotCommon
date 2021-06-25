@@ -1,8 +1,10 @@
 package ubot.common
 
-import com.github.arcticlampyrid.ktjsonrpcpeer.RpcChannel
+import com.github.arcticlampyrid.ktjsonrpcpeer.RpcChannel.Companion.jsonIgnoringUnknownKeys
 import com.github.arcticlampyrid.ktjsonrpcpeer.RpcServiceDsl
-import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonPrimitive
 
 interface UBotApp {
     suspend fun onReceiveChatMessage(
@@ -34,53 +36,55 @@ interface UBotApp {
 
     companion object {
         fun UBotApp.applyTo(rpc: RpcServiceDsl) {
-            rpc.register<UBotEventResult, JsonElement>("on_receive_chat_message") { params ->
+            rpc.register<UBotEventResult, JsonArray>("on_receive_chat_message") { params ->
                 this.onReceiveChatMessage(
-                    RpcChannel.readParam(params, 0, "bot") ?: "",
-                    RpcChannel.readParam(params, 1, "type") ?: 0,
-                    RpcChannel.readParam(params, 2, "source") ?: "",
-                    RpcChannel.readParam(params, 3, "sender") ?: "",
-                    RpcChannel.readParam(params, 4, "message") ?: "",
-                    RpcChannel.readParam(params, 5, "info") ?: ChatMessageInfo()
+                    params.getOrNull(0)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(1)?.jsonPrimitive?.int ?: 0,
+                    params.getOrNull(2)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(3)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(4)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(5)?.let {
+                        jsonIgnoringUnknownKeys.decodeFromJsonElement(ChatMessageInfo.serializer(), it)
+                    } ?: ChatMessageInfo()
                 )
             }
-            rpc.register<UBotEventResult, JsonElement>("on_member_joined") { params ->
+            rpc.register<UBotEventResult, JsonArray>("on_member_joined") { params ->
                 this.onMemberJoined(
-                    RpcChannel.readParam(params, 0, "bot") ?: "",
-                    RpcChannel.readParam(params, 1, "source") ?: "",
-                    RpcChannel.readParam(params, 2, "sender") ?: "",
-                    RpcChannel.readParam(params, 3, "inviter") ?: ""
+                    params.getOrNull(0)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(1)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(2)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(3)?.jsonPrimitive?.content ?: "",
                 )
             }
-            rpc.register<UBotEventResult, JsonElement>("on_member_left") { params ->
+            rpc.register<UBotEventResult, JsonArray>("on_member_left") { params ->
                 this.onMemberLeft(
-                    RpcChannel.readParam(params, 0, "bot") ?: "",
-                    RpcChannel.readParam(params, 1, "source") ?: "",
-                    RpcChannel.readParam(params, 2, "sender") ?: ""
+                    params.getOrNull(0)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(1)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(2)?.jsonPrimitive?.content ?: "",
                 )
             }
-            rpc.register<UBotEventResultWithReason, JsonElement>("process_group_invitation") { params ->
+            rpc.register<UBotEventResultWithReason, JsonArray>("process_group_invitation") { params ->
                 this.processGroupInvitation(
-                    RpcChannel.readParam(params, 0, "bot") ?: "",
-                    RpcChannel.readParam(params, 1, "sender") ?: "",
-                    RpcChannel.readParam(params, 2, "target") ?: "",
-                    RpcChannel.readParam(params, 3, "reason") ?: ""
+                    params.getOrNull(0)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(1)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(2)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(3)?.jsonPrimitive?.content ?: "",
                 )
             }
-            rpc.register<UBotEventResultWithReason, JsonElement>("process_friend_request") { params ->
+            rpc.register<UBotEventResultWithReason, JsonArray>("process_friend_request") { params ->
                 this.processFriendRequest(
-                    RpcChannel.readParam(params, 0, "bot") ?: "",
-                    RpcChannel.readParam(params, 1, "sender") ?: "",
-                    RpcChannel.readParam(params, 2, "reason") ?: ""
+                    params.getOrNull(0)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(1)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(2)?.jsonPrimitive?.content ?: "",
                 )
             }
-            rpc.register<UBotEventResultWithReason, JsonElement>("process_membership_request") { params ->
+            rpc.register<UBotEventResultWithReason, JsonArray>("process_membership_request") { params ->
                 this.processMembershipRequest(
-                    RpcChannel.readParam(params, 0, "bot") ?: "",
-                    RpcChannel.readParam(params, 1, "source") ?: "",
-                    RpcChannel.readParam(params, 2, "sender") ?: "",
-                    RpcChannel.readParam(params, 3, "inviter") ?: "",
-                    RpcChannel.readParam(params, 4, "reason") ?: ""
+                    params.getOrNull(0)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(1)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(2)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(3)?.jsonPrimitive?.content ?: "",
+                    params.getOrNull(4)?.jsonPrimitive?.content ?: ""
                 )
             }
         }
