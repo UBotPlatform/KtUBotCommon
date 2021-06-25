@@ -81,13 +81,13 @@ internal class UBotAppApiProxy constructor(private val rpc: RpcChannel) : UBotAp
         })
     }
 
-    override suspend fun getGroupList(bot: String): Array<String> {
+    override suspend fun getGroupList(bot: String): List<String> {
         return rpc.call("get_group_list", buildJsonArray {
             add(bot)
         })
     }
 
-    override suspend fun getMemberList(bot: String, id: String): Array<String> {
+    override suspend fun getMemberList(bot: String, id: String): List<String> {
         return rpc.call("get_member_list", buildJsonArray {
             add(bot)
             add(id)

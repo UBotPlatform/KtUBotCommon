@@ -15,8 +15,8 @@ interface UBotAccount {
     suspend fun getUserAvatar(id: String): String
     suspend fun getSelfID(): String
     suspend fun getPlatformID(): String
-    suspend fun getGroupList(): Array<String>
-    suspend fun getMemberList(id: String): Array<String>
+    suspend fun getGroupList(): List<String>
+    suspend fun getMemberList(id: String): List<String>
 
     companion object {
         fun UBotAccount.applyTo(rpc: RpcServiceDsl) {
@@ -74,10 +74,10 @@ interface UBotAccount {
             rpc.register<String, JsonElement>("get_platform_id") { _ ->
                 this.getPlatformID()
             }
-            rpc.register<Array<String>, JsonElement>("get_group_list") { _ ->
+            rpc.register<List<String>, JsonElement>("get_group_list") { _ ->
                 this.getGroupList()
             }
-            rpc.register<Array<String>, JsonElement>("get_member_list") { params ->
+            rpc.register<List<String>, JsonElement>("get_member_list") { params ->
                 this.getMemberList(
                     RpcChannel.readParam(params, 0, "id") ?: ""
                 )
