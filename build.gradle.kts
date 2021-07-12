@@ -1,6 +1,6 @@
 plugins {
-    kotlin("multiplatform") version "1.5.10"
-    kotlin("plugin.serialization") version "1.5.10"
+    kotlin("multiplatform") version "1.5.20"
+    kotlin("plugin.serialization") version "1.5.20"
     `maven-publish`
 }
 group = "com.github.UBotPlatform.KtUBotCommon"
@@ -16,9 +16,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
-                implementation("io.ktor:ktor-client-core:1.6.0")
-                implementation("com.github.ArcticLampyrid.KtJsonRpcPeer:KtJsonRpcPeer:0.12.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+                implementation("io.ktor:ktor-client-core:1.6.1")
+                implementation("com.github.ArcticLampyrid.KtJsonRpcPeer:KtJsonRpcPeer:0.12.6")
                 implementation("io.github.microutils:kotlin-logging:2.0.8")
             }
         }
