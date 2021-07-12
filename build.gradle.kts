@@ -1,6 +1,6 @@
 plugins {
     kotlin("multiplatform") version "1.5.10"
-    kotlin("plugin.serialization") version "1.5.10"
+    kotlin("plugin.serialization") version "1.5.20"
     `maven-publish`
 }
 group = "com.github.UBotPlatform.KtUBotCommon"
