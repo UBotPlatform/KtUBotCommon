@@ -123,11 +123,11 @@ object UBotClientHost {
                     channel = dialRouter(httpClient, op, urlStr, registerClient)
                     break
                 } catch (e: Throwable) {
-                    logger.error(e) { "Failed to connect to UBot Router, it will try again in 5 seconds." }
+                    logger.error(e) { "Failed to connect to UBot Router, it will try again in 5 seconds. ($retryCount)" }
                 }
             }
-            if (channel == null) {
-                throw Exception("Failed to connect to UBot Router after 5 attempts.")
+            check(channel != null) {
+                "Failed to connect to UBot Router after 5 attempts."
             }
             logger.info { "Connected to UBot Router" }
             try {
