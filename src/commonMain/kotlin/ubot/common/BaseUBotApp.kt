@@ -25,12 +25,12 @@ open class BaseUBotApp : UBotApp {
         sender: String,
         target: String,
         reason: String
-    ): UBotEventResultWithReason {
-        return UBotEventResultWithReason.Ignore
+    ): UBotEventResult {
+        return UBotEventResult.Ignore
     }
 
-    override suspend fun processFriendRequest(bot: String, sender: String, reason: String): UBotEventResultWithReason {
-        return UBotEventResultWithReason.Ignore
+    override suspend fun processFriendRequest(bot: String, sender: String, reason: String): UBotEventResult {
+        return UBotEventResult.Ignore
     }
 
     override suspend fun processMembershipRequest(
@@ -39,7 +39,7 @@ open class BaseUBotApp : UBotApp {
         sender: String,
         inviter: String,
         reason: String
-    ): UBotEventResultWithReason {
-        return UBotEventResultWithReason.Ignore
+    ): UBotEventResult {
+        return UBotEventResult.Ignore
     }
 }

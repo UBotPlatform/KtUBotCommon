@@ -40,10 +40,10 @@ internal class UBotAccountEventEmitterProxy constructor(private val rpc: RpcChan
         sender: String,
         target: String,
         reason: String
-    ): UBotEventResultWithReason {
+    ): UBotEventResult {
         return rpc.call(
             "process_group_invitation",
-            UBotEventResultWithReason.serializer(),
+            UBotEventResult.serializer(),
             JsonArray.serializer(),
             buildJsonArray {
                 add(sender)
@@ -52,10 +52,10 @@ internal class UBotAccountEventEmitterProxy constructor(private val rpc: RpcChan
             })
     }
 
-    override suspend fun processFriendRequest(sender: String, reason: String): UBotEventResultWithReason {
+    override suspend fun processFriendRequest(sender: String, reason: String): UBotEventResult {
         return rpc.call(
             "process_friend_request",
-            UBotEventResultWithReason.serializer(),
+            UBotEventResult.serializer(),
             JsonArray.serializer(),
             buildJsonArray {
                 add(sender)
@@ -68,10 +68,10 @@ internal class UBotAccountEventEmitterProxy constructor(private val rpc: RpcChan
         sender: String,
         inviter: String,
         reason: String
-    ): UBotEventResultWithReason {
+    ): UBotEventResult {
         return rpc.call(
             "process_membership_request",
-            UBotEventResultWithReason.serializer(),
+            UBotEventResult.serializer(),
             JsonArray.serializer(),
             buildJsonArray {
                 add(source)

@@ -23,16 +23,16 @@ interface UBotApp {
         sender: String,
         target: String,
         reason: String
-    ): UBotEventResultWithReason
+    ): UBotEventResult
 
-    suspend fun processFriendRequest(bot: String, sender: String, reason: String): UBotEventResultWithReason
+    suspend fun processFriendRequest(bot: String, sender: String, reason: String): UBotEventResult
     suspend fun processMembershipRequest(
         bot: String,
         source: String,
         sender: String,
         inviter: String,
         reason: String
-    ): UBotEventResultWithReason
+    ): UBotEventResult
 
     companion object {
         fun UBotApp.applyTo(rpc: RpcServiceDsl) {
@@ -65,7 +65,7 @@ interface UBotApp {
             }
             rpc.register(
                 "process_group_invitation",
-                UBotEventResultWithReason.serializer(),
+                UBotEventResult.serializer(),
                 JsonArray.serializer()
             ) { params ->
                 this.processGroupInvitation(
@@ -77,7 +77,7 @@ interface UBotApp {
             }
             rpc.register(
                 "process_friend_request",
-                UBotEventResultWithReason.serializer(),
+                UBotEventResult.serializer(),
                 JsonArray.serializer()
             ) { params ->
                 this.processFriendRequest(
@@ -88,7 +88,7 @@ interface UBotApp {
             }
             rpc.register(
                 "process_membership_request",
-                UBotEventResultWithReason.serializer(),
+                UBotEventResult.serializer(),
                 JsonArray.serializer()
             ) { params ->
                 this.processMembershipRequest(
