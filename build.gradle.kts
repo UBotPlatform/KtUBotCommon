@@ -37,6 +37,9 @@ kotlin {
                 implementation(kotlin("test-junit"))
             }
         }
+        all {
+            languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
+        }
     }
 }
 repositories {
