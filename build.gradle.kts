@@ -3,12 +3,10 @@
 plugins {
     kotlin("multiplatform") version "1.5.21"
     kotlin("plugin.serialization") version "1.5.21"
+    id("com.github.arcticlampyrid.gradle-git-version") version "1.0.4"
     `maven-publish`
 }
 group = "com.github.UBotPlatform.KtUBotCommon"
-if (version.toString() == "unspecified") {
-    version = "0.8.0"
-}
 kotlin {
     jvm {
         compilations.all {
