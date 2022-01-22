@@ -1,8 +1,8 @@
 @file:Suppress("UNUSED_VARIABLE")
 
 plugins {
-    kotlin("multiplatform") version "1.5.30"
-    kotlin("plugin.serialization") version "1.5.30"
+    kotlin("multiplatform") version "1.6.10"
+    kotlin("plugin.serialization") version "1.6.10"
     `maven-publish`
 }
 group = "com.github.UBotPlatform.KtUBotCommon"
@@ -18,10 +18,10 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
-                implementation("io.ktor:ktor-client-core:1.6.3")
-                implementation("com.github.ArcticLampyrid.KtJsonRpcPeer:KtJsonRpcPeer:0.12.6")
-                implementation("io.github.microutils:kotlin-logging:2.0.11")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                implementation("io.ktor:ktor-client-core:1.6.7")
+                implementation("com.github.ArcticLampyrid.KtJsonRpcPeer:KtJsonRpcPeer:0.12.7")
+                implementation("io.github.microutils:kotlin-logging:2.1.21")
             }
         }
         val commonTest by getting {
@@ -38,7 +38,7 @@ kotlin {
             }
         }
         all {
-            languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
+            languageSettings.optIn("kotlin.RequiresOptIn")
         }
     }
 }
