@@ -1,7 +1,7 @@
 @file:Suppress("UNUSED_VARIABLE")
 
 plugins {
-    kotlin("multiplatform") version "1.6.10"
+    kotlin("multiplatform") version "1.6.20"
     kotlin("plugin.serialization") version "1.6.10"
     id("com.github.arcticlampyrid.gradle-git-version") version "1.0.4"
     `maven-publish`
