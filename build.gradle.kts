@@ -17,7 +17,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-                implementation("io.ktor:ktor-client-core:1.6.7")
+                implementation("io.ktor:ktor-client-core:2.0.3")
                 implementation("com.github.ArcticLampyrid.KtJsonRpcPeer:KtJsonRpcPeer:0.12.7")
                 implementation("io.github.microutils:kotlin-logging:2.1.21")
             }
