@@ -5,12 +5,13 @@ import com.github.arcticlampyrid.ktjsonrpcpeer.RpcKtorWebSocketAdapter
 import com.github.arcticlampyrid.ktjsonrpcpeer.RpcServiceDefiner
 import com.github.arcticlampyrid.ktjsonrpcpeer.build
 import io.ktor.client.*
-import io.ktor.client.features.websocket.*
+import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.http.cio.websocket.*
 import io.ktor.utils.io.core.*
+import io.ktor.websocket.*
 import mu.KotlinLogging
 import ubot.common.UBotAccount.Companion.applyTo
 import ubot.common.UBotApp.Companion.applyTo
@@ -38,44 +39,44 @@ object UBotClientHost {
                 if (urlParam.user != null || urlParam.password != null) {
                     val user = urlParam.user ?: ""
                     val password = urlParam.password ?: ""
-                    val getTokenUrl = Url(
+                    val getTokenUrl = URLBuilder(
                         if (tls)
                             URLProtocol.HTTPS
                         else
                             URLProtocol.HTTP,
                         urlParam.host,
                         urlParam.port,
-                        "/api/manager/get_token",
+                        null,
+                        null,
+                        listOf("api", "manager" , "get_token"),
                         urlParam.parameters,
                         urlParam.fragment,
-                        null,
-                        null,
                         urlParam.trailingQuery
-                    )
-                    val managerToken = httpClient.post<String>(getTokenUrl) {
-                        body = FormDataContent(Parameters.build {
+                    ).build()
+                    val managerToken = httpClient.post(getTokenUrl) {
+                        FormDataContent(Parameters.build {
                             append("user", user)
                             append("password", password)
-                        })
-                    }
+                        }).let(::setBody)
+                    }.bodyAsText()
                     logger.trace { "Got manager token: $managerToken" }
-                    managerUrl = Url(
+                    managerUrl = URLBuilder(
                         if (tls)
                             URLProtocol.WSS
                         else
                             URLProtocol.WS,
                         urlParam.host,
                         urlParam.port,
-                        urlParam.encodedPath,
+                        null,
+                        null,
+                        urlParam.pathSegments,
                         Parameters.build {
                             appendAll(urlParam.parameters)
                             append("token", managerToken)
                         },
                         urlParam.fragment,
-                        null,
-                        null,
                         urlParam.trailingQuery
-                    )
+                    ).build()
                 } else {
                     managerUrl = urlParam
                 }
@@ -144,20 +145,20 @@ object UBotClientHost {
 
     suspend fun hostApp(op: String, urlStr: String, id: String, load: suspend (appApi: UBotAppApi) -> UBotApp) {
         host(op, urlStr, { urlParam, manager ->
-            Url(
+            URLBuilder(
                 urlParam.protocol,
                 urlParam.host,
                 urlParam.port,
-                "/api/app",
+                urlParam.user,
+                urlParam.password,
+                listOf("api", "app"),
                 Parameters.build {
                     append("id", id)
                     append("token", manager.registerApp(id))
                 },
                 urlParam.fragment,
-                urlParam.user,
-                urlParam.password,
                 urlParam.trailingQuery
-            )
+            ).build()
         }, { rpc ->
             val impl = load(UBotAppApi.of(rpc))
             rpc.service = RpcServiceDefiner {
@@ -173,20 +174,20 @@ object UBotClientHost {
         load: suspend (e: UBotAccountEventEmitter) -> UBotAccount
     ) {
         host(op, urlStr, { urlParam, manager ->
-            Url(
+            URLBuilder(
                 urlParam.protocol,
                 urlParam.host,
                 urlParam.port,
-                "/api/account",
+                urlParam.user,
+                urlParam.password,
+                listOf("api", "account"),
                 Parameters.build {
                     append("id", id)
                     append("token", manager.registerAccount(id))
                 },
                 urlParam.fragment,
-                urlParam.user,
-                urlParam.password,
                 urlParam.trailingQuery
-            )
+            ).build()
         }, { rpc ->
             val impl = load(UBotAccountEventEmitter.of(rpc))
             rpc.service = RpcServiceDefiner {

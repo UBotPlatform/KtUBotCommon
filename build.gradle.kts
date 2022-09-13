@@ -1,25 +1,21 @@
 @file:Suppress("UNUSED_VARIABLE")
 
 plugins {
-    kotlin("multiplatform") version "1.6.10"
-    kotlin("plugin.serialization") version "1.6.10"
+    kotlin("multiplatform") version "1.7.10"
+    kotlin("plugin.serialization") version "1.7.10"
     id("com.github.arcticlampyrid.gradle-git-version") version "1.0.4"
     `maven-publish`
 }
 group = "com.github.UBotPlatform.KtUBotCommon"
 kotlin {
-    jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = "1.8"
-        }
-    }
+    jvm()
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-                implementation("io.ktor:ktor-client-core:1.6.7")
-                implementation("com.github.ArcticLampyrid.KtJsonRpcPeer:KtJsonRpcPeer:0.12.7")
-                implementation("io.github.microutils:kotlin-logging:2.1.21")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
+                implementation("io.ktor:ktor-client-core:2.1.1")
+                implementation("com.github.ArcticLampyrid.KtJsonRpcPeer:KtJsonRpcPeer:0.13.0")
+                implementation("io.github.microutils:kotlin-logging:2.1.23")
             }
         }
         val commonTest by getting {
