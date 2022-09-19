@@ -15,7 +15,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
                 implementation("io.ktor:ktor-client-core:2.1.1")
                 implementation("com.github.ArcticLampyrid.KtJsonRpcPeer:KtJsonRpcPeer:0.13.0")
-                implementation("io.github.microutils:kotlin-logging:2.1.23")
+                implementation("io.github.microutils:kotlin-logging:3.0.0")
             }
         }
         val commonTest by getting {
