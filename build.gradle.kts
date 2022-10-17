@@ -12,7 +12,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
                 implementation("io.ktor:ktor-client-core:2.1.1")
                 implementation("com.github.ArcticLampyrid.KtJsonRpcPeer:KtJsonRpcPeer:0.13.0")
                 implementation("io.github.microutils:kotlin-logging:2.1.23")
